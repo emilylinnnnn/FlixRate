@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.codedotorg.Movie;
 import com.codedotorg.Rating;
+import com.codedotorg.User;
 
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -60,30 +61,33 @@ public class UserRatingsScreen extends AppScreen {
      *
      * @return a list of UI components for the user ratings screen
      */
-    public List<Node> createComponents() {
-        Label userLabel = new Label();
-        ListView<Rating> listView = createListView();
-        Button backButton = getBackButton();
-
-        List<Node> componentsList = Arrays.asList(userLabel, listView, backButton);
-
-        return componentsList;
-    }
+        public List<Node> createComponents() {
+            User currentUser = MovieApp.getCurrentUser();
+            String userName = currentUser != null ? currentUser.getName() : "Unknown User";
+            Label userLabel = new Label("Ratings for: " + userName);
+            ListView<String> listView = createListView();
+            Button backButton = getBackButton();
+            return Arrays.asList(userLabel, listView, backButton);
+        }
 
     /**
      * Creates a ListView of user ratings.
      * 
      * @return a ListView of Rating objects.
      */
-    public ListView<Rating> createListView() {
-        ListView<Rating> listView = new ListView<Rating>();
-        
-
-
-
-        
-
-        return listView;
-    }
+        public ListView<String> createListView() {
+            ListView<String> listView = new ListView<>();
+            User currentUser = MovieApp.getCurrentUser();
+            if (currentUser != null) {
+                ArrayList<Rating> ratings = currentUser.getRatings();
+                for (Rating rating : ratings) {
+                    Movie movie = rating.getMovie();
+                    String movieTitle = movie != null ? movie.getTitle() : "Unknown Movie";
+                    int score = rating.getScore();
+                    listView.getItems().add(movieTitle + ": " + score);
+                }
+            }
+            return listView;
+        }
 
 }
